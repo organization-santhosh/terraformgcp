@@ -1,5 +1,5 @@
 
-name: Python package
+name: workflow1
 
 on:
   workflow_dispatch:
@@ -24,6 +24,7 @@ on:
 
 jobs:
   build:
+    name: 'Terraform'
 
     runs-on: ubuntu-latest
     environment: production
