@@ -1,5 +1,5 @@
 
-name: workflow1
+name: python1
 
 on:
   workflow_dispatch:
