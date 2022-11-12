@@ -23,9 +23,8 @@ on:
         required: true
 
 jobs:
-  build:
-    name: 'Terraform'
-
+  my_first_job:
+    name: My first job
     runs-on: ubuntu-latest
     environment: production
     permissions:
