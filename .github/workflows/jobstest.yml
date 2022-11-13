@@ -82,6 +82,7 @@ jobs:
       working-directory: ./cloud_dataflow
   my_second_job:
     name: My second job
+    needs: my_first_job
     runs-on: ubuntu-latest
     environment: production
     permissions:
