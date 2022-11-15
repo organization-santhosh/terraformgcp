@@ -21,8 +21,8 @@ on:
         type: choice
         required: true
         options:
+          - development
           - test-env
-          - non-prod
 
 
 
