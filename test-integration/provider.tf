@@ -1,5 +1,5 @@
 provider "google" {
-  project = "terraform-368716"
+  project = "terraform-test-env"
   region  = "us-central1"
   zone    = "us-central1-c"
 }
