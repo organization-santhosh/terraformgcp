@@ -1,2 +1,2 @@
-bucket_name = "mytestsantosh"
+bucket_name = "mytestsantoshtesenv"
 location = "US"
