@@ -25,7 +25,12 @@ on:
           - test-env
 
 
+# We don't want parallel deployments.
+concurrency: develop
 
+env:
+  # Environment variables needed only by the workflow.
+  VALIDATOR_VERSION: "0.9.1"
 
 
 jobs:
