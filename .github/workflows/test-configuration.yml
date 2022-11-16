@@ -25,47 +25,14 @@ on:
           - test-env
 
 
-# We don't want parallel deployments.
-concurrency: develop
 
-env:
-  # Environment variables needed only by the workflow.
-  VALIDATOR_VERSION: "0.9.1"
 
 
 jobs:
-  extract-environment-name:
-    name: "Extract environment name"
-    # Define environment variables for this job.
-    env:
-      ENV_NAME: ""    
-      TFVARS_FILE: ""
-    runs-on: ubuntu-latest
-    steps:
-      # Set environment and read secret values.
-      - name: Set env vars
-        run: |
-          if [[ ${GITHUB_REF} == *"master"* ]]
-          then
-            echo "ENV_NAME=production" >> $GITHUB_ENV
-            echo "TFVARS_FILE=prod_terraform.tfvars" >> $GITHUB_ENV
-          elif [[ ${GITHUB_REF} == *"integration"* ]]
-          then
-            echo "ENV_NAME=test" >> $GITHUB_ENV
-            echo "TFVARS_FILE=test_terraform.tfvars" >> $GITHUB_ENV
-          else
-            echo "ENV_NAME=development" >> $GITHUB_ENV
-            echo "TFVARS_FILE=dev_terraform.tfvars" >> $GITHUB_ENV
-          fi
-    # Set outputs from environment variables set in steps.
-    outputs:
-      environment: ${{ env.ENV_NAME }}
-      tfvars: ${{ env.TFVARS_FILE }
-      
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: ${{ needs.extract-environment-name.outputs.environment }}
+    environment: ${{ github.event.inputs.environment }}
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -105,12 +72,12 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var-file=${{ needs.extract-environment-name.outputs.tfvars }} -out=plan.tfplan
+      run: terraform plan -var-file="test_terraform.tfvars" -input=false
       working-directory: ./test-integration
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
-      #if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform apply plan.tfplan -auto-approve -input=false
+     #if: github.ref == 'refs/heads/"main"'
+      run: terraform apply -var-file="test_terraform.tfvars" -auto-approve -input=false
       working-directory: ./test-integration
