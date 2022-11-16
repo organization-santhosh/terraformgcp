@@ -1,0 +1,466 @@
+name: 'spur-DockerImages-Dev'
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: choice
+        required: true
+        options:
+          - test-env
+          - non-prod
+
+  
+
+
+jobs:
+  job1:
+    name: 'processing-capability-dockerimage'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-processingcapability
+      working-directory: ./processingcapability/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-processingcapability europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-processingcapability
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-processingcapability
+      working-directory: ./processingcapability/code/cloud-run
+  job2:
+    name: 'productionunitcapabilitygroup-dockerimage'
+    needs: job1
+    runs-on: ${{ github.event.inputs.environment }}
+    environment: non-prod
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-productionunitcapabilitygroup
+      working-directory: ./productionunitcapabilitygroup/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-productionunitcapabilitygroup europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-productionunitcapabilitygroup
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-productionunitcapabilitygroup
+      working-directory: ./productionunitcapabilitygroup/code/cloud-run
+  job3:
+    name: 'productionunitcategory-dockerimage'
+    needs: job2
+    runs-on: ${{ github.event.inputs.environment }}
+    environment: non-prod
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-productionunitcategory
+      working-directory: ./productionunitcategory/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-productionunitcategory europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-productionunitcategory
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-productionunitcategory
+      working-directory: ./productionunitcategory/code/cloud-run
+  job4:
+    name: 'province-dockerimage'
+    needs: job3
+    runs-on: ${{ github.event.inputs.environment }}
+    environment: non-prod
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-province
+      working-directory: ./province/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-province europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-province
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-province
+      working-directory: ./province/code/cloud-run
+  job5:
+    name: 'putype-dockerimage'
+    needs: job4
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-putype
+      working-directory: ./putype/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-putype europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-putype
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-putype
+      working-directory: ./putype/code/cloud-run
+  job6:
+    name: 'putypeattribute-dockerimage'
+    needs: job5
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-putypeattribute
+      working-directory: ./putypeattribute/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-putypeattribute europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-putypeattribute
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-putypeattribute
+      working-directory: ./putypeattribute/code/cloud-run
+  job7:
+    name: 'suppliercategory-dockerimage'
+    needs: job6
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-suppliercategory
+      working-directory: ./suppliercategory/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-suppliercategory europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-suppliercategory
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-suppliercategory
+      working-directory: ./suppliercategory/code/cloud-run
+  job8:
+    name: 'supuassociationtype-dockerimage'
+    needs: job7
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-supuassociationtype
+      working-directory: ./supuassociationtype/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-supuassociationtype europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supuassociationtype
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supuassociationtype
+      working-directory: ./supuassociationtype/code/cloud-run
+  job9:
+    name: 'supucertificate-dockerimage'
+    needs: job8
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-supucertificate
+      working-directory: ./supucertificate/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-supucertificate europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supucertificate
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supucertificate
+      working-directory: ./supucertificate/code/cloud-run
+  job10:
+    name: 'supulicense-dockerimage'
+    needs: job9
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-supulicense
+      working-directory: ./supulicense/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-supulicense europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supulicense
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supulicense
+      working-directory: ./supulicense/code/cloud-run
+  job11:
+    name: 'supustatus-dockerimage'
+    needs: job10
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-supustatus
+      working-directory: ./supustatus/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-supustatus europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supustatus
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-supustatus
+      working-directory: ./supustatus/code/cloud-run
+  job12:
+    name: 'suputype-dockerimage'
+    needs: job11
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    
+    - uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+    - name: "authentication to Docker repositories "
+      run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+    - name: Build the Docker image
+      run: docker build .  --file dockerfile --tag docimage-suputype
+      working-directory: ./suputype/code/cloud-run
+    - name: docker image list
+      run: docker image ls 
+    - name : retag
+      run: docker image tag docimage-suputype europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-suputype
+    - name: docker push
+      run: docker push europe-west1-docker.pkg.dev/supplier-spur-d-6458/spur-artifacts-repo/docimage-suputype
+      working-directory: ./suputype/code/cloud-run
+  
+  
+  
+  
+  
