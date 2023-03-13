@@ -83,5 +83,5 @@ jobs:
       working-directory: ./test-integration
       
       
-    #- name: copy to gcs
-     # run: gsutil cp * gs://azuresanthu
+    - name: copy to gcs
+      run: gsutil cp * gs://azuresanthu
