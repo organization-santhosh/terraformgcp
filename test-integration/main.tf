@@ -1,4 +1,8 @@
-resource "google_storage_bucket" "test-bucket" {
-  name          = var.bucket_name
-  location      = var.location
+resource "google_service_account" "myaccount" {
+  account_id   = "myaccount"
+  display_name = "My Service Account"
+}
+
+resource "google_service_account_key" "mykey" {
+  service_account_id = google_service_account.myaccount.name
 }
