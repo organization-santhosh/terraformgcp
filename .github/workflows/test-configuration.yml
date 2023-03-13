@@ -82,8 +82,14 @@ jobs:
       run: terraform apply -auto-approve -input=false
       working-directory: ./test-integration
       
-    - name: sa perm
-      run: gsutil iam ch serviceAccount:terraform@stable-inn-369612.iam.gserviceaccount.com:objectCreator gs://azuresanthu
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        token_format: 'access_token'
+        access_token_lifetime: 300s
+
 
       
     - name: copy to gcs
