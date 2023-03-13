@@ -82,6 +82,9 @@ jobs:
       run: terraform apply -auto-approve -input=false
       working-directory: ./test-integration
       
+    - name: sa perm
+      run: gsutil iam ch serviceAccount:terraform@stable-inn-369612.iam.gserviceaccount.com:objectCreator gs://azuresanthu
+
       
     - name: copy to gcs
       run: gsutil cp * gs://azuresanthu
